@@ -4,7 +4,7 @@ import java.util.Random;
 public class App {
     // Game Data
     static char[][] squares = new char[4][4];
-    static int k = 4, depth = 6;
+    static int k = 4, depth = 7;
     static boolean gameCompleted = false, aiTurn = false;
     static char ai, opponent;
 
@@ -64,7 +64,7 @@ public class App {
                 squares[move[0]][move[1]] = opponent;
             }
 
-            int eval = Evaluation(squares);
+            int eval = Evaluation(squares, 0);
             if (Math.abs(eval) == 5000) {
                 gameCompleted = true;
             }
@@ -119,8 +119,8 @@ public class App {
     }
 
     static int Search(char[][] board, int depth, boolean maximizingPlayer) {
-        int eval = Evaluation(board);
-        if (Math.abs(eval) == 5000 || depth == 0) {
+        int eval = Evaluation(board, depth);
+        if (Math.abs(eval) > 3000 || depth == 0) {
             return eval;
         }
 
@@ -157,7 +157,7 @@ public class App {
         return board[x][y] == '-';
     }
 
-    static int Evaluation(char[][] board) {
+    static int Evaluation(char[][] board, int depth) {
         int aiScore = 0, opponentScore = 0;
 
         for (int x = 0; x < board.length; x++) {
@@ -170,10 +170,9 @@ public class App {
             }
         }
 
-        if (aiScore >= 5000) return 5000;
-        if (opponentScore >= 5000) return -5000;
-
-        return aiScore - opponentScore;
+        if (aiScore >= 5000) return 5000 - depth;
+        else if (opponentScore >= 5000) return -5000 + depth;
+        else return aiScore - opponentScore;
     }
 
     static int checkLines(char[][] board, int x, int y, char player) {
@@ -202,6 +201,6 @@ public class App {
         }
 
         if (count == k) return 5000;
-        return count;
+        else return count;
     }
 }
